@@ -108,6 +108,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/estadoTxt" />
 
+
+
     <!-- Botón Registrar -->
     <Button
         android:id="@+id/btnIngresar"
@@ -118,7 +120,7 @@
         app:layout_constraintEnd_toStartOf="@+id/btnShare"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fechaTxt"
+        app:layout_constraintTop_toBottomOf="@+id/ubicacionTxt"
         app:layout_constraintVertical_bias="0.1" />
 
     <!-- Botón Compartir -->
@@ -131,7 +133,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btnIngresar"
-        app:layout_constraintTop_toBottomOf="@+id/fechaTxt"
+        app:layout_constraintTop_toBottomOf="@+id/ubicacionTxt"
         app:layout_constraintVertical_bias="0.1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

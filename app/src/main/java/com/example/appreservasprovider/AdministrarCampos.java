@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -13,17 +14,25 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.appreservasprovider.ClimaAPI.ClimaAPI;
+import com.example.appreservasprovider.ClimaAPI.ClimaResponse;
+import com.example.appreservasprovider.ClimaAPI.ClimaService;
 import com.example.appreservasprovider.providers.CamposProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class AdministrarCampos extends BaseActivity {
 	private EditText fechaTxt, nombreTxt, descripcionTxt, estadoTxt, telefonoTxt;
 	private Button btnIngresar;
 	private Calendar calendar;
+	private static final String API_KEY = "YOUR_API_KEY";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +50,15 @@ public class AdministrarCampos extends BaseActivity {
 		fechaTxt = findViewById(R.id.fechaTxt);
 		calendar = Calendar.getInstance();
 
-		fechaTxt.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				showDatePickerDialog();
-			}
+		fechaTxt.setOnClickListener(v -> {
+			// Implementa el selector de fecha aquí
+			new DatePickerDialog(AdministrarCampos.this, (view, year, month, dayOfMonth) -> {
+				calendar.set(Calendar.YEAR, year);
+				calendar.set(Calendar.MONTH, month);
+				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+				updateDateLabel();
+				fetchWeather();
+			}, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
 		});
 
 		btnIngresar.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +99,7 @@ public class AdministrarCampos extends BaseActivity {
 			public void onClick(View v) {
 				Intent sendIntent = new Intent();
 				sendIntent.setAction(Intent.ACTION_SEND);
-				sendIntent.putExtra(Intent.EXTRA_TEXT, "Reserve el campo de Juego:"+descripcionTxt);
+				sendIntent.putExtra(Intent.EXTRA_TEXT, "Reserve el campo de Juego:"+descripcionTxt.getText().toString());
 				sendIntent.setType("text/plain");
 
 				Intent shareIntent = Intent.createChooser(sendIntent, null);
@@ -111,6 +124,7 @@ public class AdministrarCampos extends BaseActivity {
 				calendar.set(Calendar.MONTH, monthOfYear);
 				calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 				updateDateLabel();
+				fetchWeather();
 			}
 		};
 
@@ -126,4 +140,45 @@ public class AdministrarCampos extends BaseActivity {
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
 		fechaTxt.setText(sdf.format(calendar.getTime()));
 	}
+
+	private void fetchWeather() {
+		double latitude = 40.7128; // Ejemplo: latitud de Nueva York
+		double longitude = -74.0060; // Ejemplo: longitud de Nueva York
+		String selectedDate = fechaTxt.getText().toString();
+
+		ClimaService apiService = ClimaAPI.getClient().create(ClimaService.class);
+		Call<ClimaResponse> call = apiService.getClimaForecast(latitude, longitude, API_KEY);
+
+		call.enqueue(new Callback<ClimaResponse>() {
+			@Override
+			public void onResponse(Call<ClimaResponse> call, Response<ClimaResponse> response) {
+				if (response.isSuccessful() && response.body() != null) {
+					ClimaResponse climaResponse = response.body();
+					boolean willRain = false;
+
+					for (ClimaResponse.ClimaList climaList : climaResponse.lista) {
+						if (climaList.fecha.contains(selectedDate)) {
+							for (ClimaResponse.Clima weather : climaList.clima) {
+								if (weather.main.equalsIgnoreCase("Rain")) {
+									willRain = true;
+									break;
+								}
+							}
+						}
+					}
+
+					String message = willRain ? "Lloverá" : "No lloverá";
+					Toast.makeText(AdministrarCampos.this, message, Toast.LENGTH_SHORT).show();
+				} else {
+					Log.e("API Error", "Response error: " + response.code());
+				}
+			}
+
+			@Override
+			public void onFailure(Call<ClimaResponse> call, Throwable t) {
+				Log.e("API Error", "Request failed: " + t.getMessage());
+			}
+		});
+	}
+
 }

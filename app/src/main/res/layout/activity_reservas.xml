@@ -28,8 +28,8 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="321dp"
-        android:layout_height="53dp"
+        android:layout_width="335dp"
+        android:layout_height="57dp"
         android:text="Reservas"
         android:textAlignment="center"
         android:textSize="34sp"
@@ -43,8 +43,8 @@
 
     <EditText
         android:id="@+id/descripcionTxt"
-        android:layout_width="333dp"
-        android:layout_height="53dp"
+        android:layout_width="335dp"
+        android:layout_height="57dp"
         android:layout_marginTop="92dp"
         android:ems="10"
         android:hint="Ingrese Descripcion"
@@ -56,8 +56,8 @@
 
     <EditText
         android:id="@+id/fechaTxt"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="335dp"
+        android:layout_height="57dp"
         android:layout_marginTop="16dp"
         android:hint="Seleccione Fecha"
         android:focusable="false"
@@ -68,8 +68,8 @@
 
     <EditText
         android:id="@+id/usuarioTxt"
-        android:layout_width="338dp"
-        android:layout_height="58dp"
+        android:layout_width="335dp"
+        android:layout_height="57dp"
         android:layout_marginTop="36dp"
         android:hint="Ingrese usuario"
         android:inputType="text"
@@ -80,8 +80,8 @@
 
     <EditText
         android:id="@+id/ubicacionTxt"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="335dp"
+        android:layout_height="57dp"
         android:layout_marginTop="16dp"
         android:hint="Ubicación"
         android:inputType="text"
